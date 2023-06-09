@@ -11,6 +11,7 @@ for i in $( eval echo {0..$max_count} )
 done
 
 echo "end time: `date`"
-
+# For adding more column content, refer col_gen.py file
 # time gen.sh check.csv 10
 # time <file_name.sh> <result_file_name> <row_count>
+
