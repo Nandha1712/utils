@@ -98,7 +98,7 @@ def start_cleaning_up():
         if not os.path.exists(builds_path):
             continue
 
-        logger.info(f"builds_path: ${builds_path}")
+        logger.info(f"builds_path: {builds_path}")
         build_ids = get_contents_of_build_directory(builds_path)
         build_ids.sort()
 
@@ -108,10 +108,11 @@ def start_cleaning_up():
         not_deleted = build_ids[-BUILDS_TO_LEAVE:]
         logger.info(f"Not deleted {not_deleted}")
 
+        if len(build_ids) <= BUILDS_TO_LEAVE:
+            continue
+
         builds_to_delete = build_ids[: len(build_ids) - BUILDS_TO_LEAVE]
         logger.info(f"To be deleted {builds_to_delete}")
-        if len(builds_to_delete) <= BUILDS_TO_LEAVE:
-            continue
 
         delete_builds(builds_path, builds_to_delete)
 
