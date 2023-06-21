@@ -25,7 +25,7 @@ def create_and_get_logging_location():
         try:
             os.makedirs(logging_location)
         except Exception as e:
-            print(e)
+            logger.error(e)
 
     return logging_location
 
@@ -37,7 +37,7 @@ def create_logger(app_name):
 
     logger = logging.getLogger(app_name)
     logger.setLevel(logging_level)
-    _logfile = logging_location + '_' + log_file_name
+    _logfile = logging_location + f"_{app_name}_" + log_file_name
 
     fh = logging.FileHandler(_logfile)
     fh.setLevel(logging_level)
@@ -58,6 +58,8 @@ def create_logger(app_name):
 
 # These number of recent builds will not be deleted
 BUILDS_TO_LEAVE = 10
+
+logger = create_logger("jenkins_cleanup")
 
 
 def get_contents_of_build_directory(build_path):
@@ -82,7 +84,7 @@ def delete_builds(parent_path, req_build_ids):
         try:
             shutil.rmtree(to_be_deleted)
         except Exception as exp:
-            print(f"Exception {exp} while deleting {to_be_deleted}")
+            logger.error(f"Exception {exp} while deleting {to_be_deleted}")
 
 
 def start_cleaning_up():
@@ -96,19 +98,19 @@ def start_cleaning_up():
         if not os.path.exists(builds_path):
             continue
 
-        print(f"builds_path: ${builds_path}")
+        logger.info(f"builds_path: ${builds_path}")
         build_ids = get_contents_of_build_directory(builds_path)
         build_ids.sort()
 
         # Leave last 10 builds, delete rest of them
 
-        print(f"All build ids: {build_ids}")
+        logger.info(f"All build ids: {build_ids}")
         not_deleted = build_ids[-BUILDS_TO_LEAVE:]
-        print(f"Not deleted {not_deleted}")
+        logger.info(f"Not deleted {not_deleted}")
 
         builds_to_delete = build_ids[: len(build_ids) - BUILDS_TO_LEAVE]
-        print(f"To be deleted {builds_to_delete}")
-        if len(builds_to_delete) == 0:
+        logger.info(f"To be deleted {builds_to_delete}")
+        if len(builds_to_delete) <= BUILDS_TO_LEAVE:
             continue
 
         delete_builds(builds_path, builds_to_delete)
