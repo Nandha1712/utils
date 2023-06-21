@@ -117,4 +117,9 @@ def start_cleaning_up():
 
 
 if __name__ == '__main__':
+    start_time = datetime.utcnow()
+    logger.info(f"Cleanup process started @ {start_time}")
     start_cleaning_up()
+    end_time = datetime.utcnow()
+    time_taken = (end_time - start_time).total_seconds()
+    logger.info(f"Cleanup process completed @ {end_time}. Took {time_taken} Seconds")
