@@ -2,11 +2,13 @@
 pip install pipdeptree
 pipdeptree -fl
 
+pipdeptree -fl > dummy.txt
+
 Install pipdeptree to get dependency tree of virtual env.
 Then use the following script to convert that text into xml format
 """
 
-result_file_name = "az_jul_6_2023_result.xml"
+result_file_name = "az-jul_6_2023_result.xml"
 file_path = "dummy.txt"
 print("Processing file: {}".format(file_path))
 
@@ -37,6 +39,10 @@ with open(result_file_name, "w") as result_file_ctr:
             if edt_text in line:
                 line = line.replace(edt_text, "")
                 line = line.replace(")", "")
+
+            if "file:///" in line:
+                tmp_str = line.split("/")
+                line = tmp_str[len(tmp_str) - 1]
 
             split_arr = line.split(" ")
 
